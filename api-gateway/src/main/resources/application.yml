@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      server:
+        webflux:
+          routes:
+            - id: entrega-service
+              uri: https://localhost:7158
+              predicates:
+                - Path=/entregas
+              filters:
+                - StripPrefix=0
+          httpclient:
+            ssl:
+              useInsecureTrustManager: true
+
+
+server:
+  port: 8080
