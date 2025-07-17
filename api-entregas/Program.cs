@@ -31,13 +31,13 @@ if (app.Environment.IsDevelopment())
 }
 
 #region endpoints
-app.MapGet("/motoboys", (MotoboyService service) =>
+app.MapGet("api/motoboys", (MotoboyService service) =>
 {
     var motoboys = service.ListarTodos();
     return Results.Ok(motoboys);
 });
 
-app.MapPost("/entregas", (CriarEntregaRequest request, EntregaService service) =>
+app.MapPost("api/entregas", (CriarEntregaRequest request, EntregaService service) =>
 {
     try
     {
@@ -54,7 +54,7 @@ app.MapPost("/entregas", (CriarEntregaRequest request, EntregaService service) =
     }
 });
 
-app.MapPut("/entregas/{id}/status", (int id, AtualizarStatusEntregaRequest request, EntregaService service) =>
+app.MapPut("api/entregas/{id}/status", (int id, AtualizarStatusEntregaRequest request, EntregaService service) =>
 {
     try
     {
@@ -71,7 +71,7 @@ app.MapPut("/entregas/{id}/status", (int id, AtualizarStatusEntregaRequest reque
     }
 });
 
-app.MapPost("/motoboys", (CriarMotoboyRequest request, MotoboyService service) =>
+app.MapPost("api/motoboys", (CriarMotoboyRequest request, MotoboyService service) =>
 {
     try
     {
@@ -87,7 +87,7 @@ app.MapPost("/motoboys", (CriarMotoboyRequest request, MotoboyService service) =
     }
 });
 
-app.MapPut("/motoboys/{id}", (int id, AtualizarMotoboyRequest request, MotoboyService service) =>
+app.MapPut("api/motoboys/{id}", (int id, AtualizarMotoboyRequest request, MotoboyService service) =>
 {
     try
     {

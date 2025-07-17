@@ -10,13 +10,12 @@ spring:
             - id: entrega-service
               uri: https://localhost:7158
               predicates:
-                - Path=/entregas
+                - Path=/api/**   
               filters:
                 - StripPrefix=0
           httpclient:
             ssl:
-              useInsecureTrustManager: true
-
+              use-insecure-trust-manager: true
 
 server:
   port: 8080
