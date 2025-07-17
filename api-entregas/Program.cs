@@ -1,17 +1,107 @@
+﻿using api_entregas.Data;
+using api_entregas.DTO.Entrega;
+using api_entregas.DTO.Motoboy;
+using api_entregas.Exceptions;
+using api_entregas.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<EntregaDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddControllers();
+builder.Services.AddScoped<EntregaService>();
+builder.Services.AddScoped<MotoboyService>();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo { Title = "API de Entregas", Version = "v1" });
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.MapControllers();
+#region endpoints
+app.MapGet("/motoboys", (MotoboyService service) =>
+{
+    var motoboys = service.ListarTodos();
+    return Results.Ok(motoboys);
+});
+
+app.MapPost("/entregas", (CriarEntregaRequest request, EntregaService service) =>
+{
+    try
+    {
+        service.CriarEntrega(request);
+        return Results.Ok("Entrega criada com sucesso.");
+    }
+    catch (DadosInvalidosException ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut("/entregas/{id}/status", (int id, AtualizarStatusEntregaRequest request, EntregaService service) =>
+{
+    try
+    {
+        service.MudarStatus(id, request);
+        return Results.Ok("Status atualizado com sucesso.");
+    }
+    catch (EntidadeNaoEncontradaException ex)
+    {
+        return Results.NotFound(ex.Message);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPost("/motoboys", (CriarMotoboyRequest request, MotoboyService service) =>
+{
+    try
+    {
+        var motoboy = service.CriarMotoboy(request);
+        if (motoboy is null)
+            return Results.Problem("Erro ao criar motoboy.");
+
+        return Results.Ok(motoboy);
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+
+app.MapPut("/motoboys/{id}", (int id, AtualizarMotoboyRequest request, MotoboyService service) =>
+{
+    try
+    {
+        var atualizado = service.Atualizar(id, request);
+        if (!atualizado)
+            return Results.NotFound($"Motoboy com ID {id} não encontrado.");
+
+        return Results.Ok("Motoboy atualizado com sucesso.");
+    }
+    catch (Exception ex)
+    {
+        return Results.Problem(ex.Message);
+    }
+});
+#endregion
 
 app.Run();
