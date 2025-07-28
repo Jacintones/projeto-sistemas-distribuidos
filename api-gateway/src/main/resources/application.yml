@@ -10,7 +10,7 @@ spring:
             - id: entrega-service
               uri: https://localhost:7158
               predicates:
-                - Path=/api/**   
+                - Path=/api/**
               filters:
                 - StripPrefix=0
           httpclient:

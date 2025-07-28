@@ -1,0 +1,232 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "API de Entregas",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/motoboys": {
+      "get": {
+        "tags": [
+          "api-entregas"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "api-entregas"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarMotoboyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/entregas": {
+      "post": {
+        "tags": [
+          "api-entregas"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CriarEntregaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/entregas/{id}/status": {
+      "put": {
+        "tags": [
+          "api-entregas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarStatusEntregaRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/motoboys/{id}": {
+      "put": {
+        "tags": [
+          "api-entregas"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AtualizarMotoboyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AtualizarMotoboyRequest": {
+        "required": [
+          "nome",
+          "placaMoto"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "placaMoto": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string"
+          },
+          "ativo": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AtualizarStatusEntregaRequest": {
+        "required": [
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/StatusEntrega"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CriarEntregaRequest": {
+        "required": [
+          "endereco",
+          "motoboyId",
+          "nomeCliente",
+          "telefone"
+        ],
+        "type": "object",
+        "properties": {
+          "nomeCliente": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "endereco": {
+            "maxLength": 200,
+            "minLength": 0,
+            "type": "string"
+          },
+          "telefone": {
+            "minLength": 1,
+            "type": "string",
+            "format": "tel"
+          },
+          "motoboyId": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CriarMotoboyRequest": {
+        "required": [
+          "nome",
+          "placaMoto"
+        ],
+        "type": "object",
+        "properties": {
+          "nome": {
+            "maxLength": 100,
+            "minLength": 0,
+            "type": "string"
+          },
+          "placaMoto": {
+            "maxLength": 10,
+            "minLength": 0,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "StatusEntrega": {
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "type": "integer",
+        "format": "int32"
+      }
+    }
+  }
+}
