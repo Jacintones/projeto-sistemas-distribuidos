@@ -3,3 +3,10 @@ dist/
 build/
 .vite/
 .cache/
+
+.vs/
+bin/
+obj/
+api-entregas/bin/
+api-entregas/obj/
+api-entregas/.vs/
