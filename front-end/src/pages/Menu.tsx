@@ -50,7 +50,7 @@ const Menu = () => {
             <Button 
               variant="outline" 
               onClick={() => navigate("/tables")}
-              className="mr-4"z
+              className="mr-4"
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Voltar
