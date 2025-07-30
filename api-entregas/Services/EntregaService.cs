@@ -3,6 +3,7 @@ using api_entregas.DTO.Entrega;
 using api_entregas.Exceptions;
 using api_entregas.Models;
 using api_entregas.Models.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace api_entregas.Services
 {
@@ -47,7 +48,7 @@ namespace api_entregas.Services
             }
         }
 
-        public void MudarStatus(int id, AtualizarStatusEntregaRequest request)
+        public void MudarStatus(long id, AtualizarStatusEntregaRequest request)
         {
             try
             {
@@ -80,6 +81,22 @@ namespace api_entregas.Services
             {
                 _logger.LogError(ex, "Erro ao atualizar status da entrega ID {Id}.", id);
                 throw new ErroInternoException("Erro interno ao atualizar status da entrega.", ex);
+            }
+        }
+
+        public List<Entrega> ListarTodas()
+        {
+            try
+            {
+                return _context.Entregas
+                    .Include(e => e.Motoboy)
+                    .OrderByDescending(e => e.DataSolicitada)
+                    .ToList();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Erro ao listar entregas.");
+                throw new ErroInternoException("Erro interno ao listar entregas.", ex);
             }
         }
     }

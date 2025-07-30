@@ -54,7 +54,7 @@ app.MapPost("api/entregas", (CriarEntregaRequest request, EntregaService service
     }
 });
 
-app.MapPut("api/entregas/{id}/status", (int id, AtualizarStatusEntregaRequest request, EntregaService service) =>
+app.MapPut("api/entregas/{id}/status", (long id, AtualizarStatusEntregaRequest request, EntregaService service) =>
 {
     try
     {
@@ -102,6 +102,35 @@ app.MapPut("api/motoboys/{id}", (int id, AtualizarMotoboyRequest request, Motobo
         return Results.Problem(ex.Message);
     }
 });
+
+app.MapGet("api/motoboys/ativos", (MotoboyService service) =>
+{
+    var motoboys = service.ListarTodos()
+        .Where(m => m.Ativo == true)
+        .Select(m => new { m.Id, m.Nome });
+
+    return Results.Ok(motoboys);
+});
+
+app.MapGet("api/entregas", (EntregaService service) =>
+{
+    var entregas = service.ListarTodas()
+        .Select(e => new
+        {
+            e.Id,
+            e.NomeCliente,
+            e.Endereco,
+            e.Telefone,
+            e.MotoboyId,
+            e.Status,
+            e.DataSolicitada,
+            MotoboyNome = e.Motoboy?.Nome
+        });
+
+    return Results.Ok(entregas);
+});
+
+
 #endregion
 
 app.Run();

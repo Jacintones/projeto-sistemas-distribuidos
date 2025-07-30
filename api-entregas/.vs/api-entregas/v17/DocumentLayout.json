@@ -3,6 +3,10 @@
   "WorkspaceRootPath": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{B122A84E-4525-496E-A211-55F31E870866}|api-entregas.csproj|c:\\users\\thiag\\documents\\sd\\projeto-sistemas-distribuidos\\api-entregas\\services\\entregaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B122A84E-4525-496E-A211-55F31E870866}|api-entregas.csproj|solutionrelative:services\\entregaservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B122A84E-4525-496E-A211-55F31E870866}|api-entregas.csproj|c:\\users\\thiag\\documents\\sd\\projeto-sistemas-distribuidos\\api-entregas\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B122A84E-4525-496E-A211-55F31E870866}|api-entregas.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -26,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -42,33 +46,46 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "EntregaService.cs",
+              "DocumentMoniker": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Services\\EntregaService.cs",
+              "RelativeDocumentMoniker": "Services\\EntregaService.cs",
+              "ToolTip": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Services\\EntregaService.cs",
+              "RelativeToolTip": "Services\\EntregaService.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAADgvzIAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-30T00:54:29.482Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "MotoboyService.cs",
               "DocumentMoniker": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Services\\MotoboyService.cs",
               "RelativeDocumentMoniker": "Services\\MotoboyService.cs",
               "ToolTip": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Services\\MotoboyService.cs",
               "RelativeToolTip": "Services\\MotoboyService.cs",
-              "ViewState": "AgIAACQAAAAAAAAAAAAowCoAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAwwCoAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-17T18:22:14.357Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AgIAAFEAAAAAAAAAAAAwwGsAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAB8AAAAAAAAAAAArwDwAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-17T18:13:31.697Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "launchSettings.json",
               "DocumentMoniker": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\Properties\\launchSettings.json",
               "RelativeDocumentMoniker": "Properties\\launchSettings.json",
@@ -76,12 +93,11 @@
               "RelativeToolTip": "Properties\\launchSettings.json",
               "ViewState": "AgIAABYAAAAAAAAAAAAwwCIAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-07-17T18:13:07.518Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-17T18:13:07.518Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "api-entregas.http",
               "DocumentMoniker": "C:\\Users\\thiag\\Documents\\SD\\projeto-sistemas-distribuidos\\api-entregas\\api-entregas.http",
               "RelativeDocumentMoniker": "api-entregas.http",
@@ -89,8 +105,7 @@
               "RelativeToolTip": "api-entregas.http",
               "ViewState": "AgIAAAAAAAAAAAAAAAAuwAIAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003502|",
-              "WhenOpened": "2025-07-17T18:12:38.883Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-17T18:12:38.883Z"
             }
           ]
         }

@@ -39,6 +39,10 @@ const Dashboard = () => {
               <Plus className="w-4 h-4 mr-2" />
               Novo Pedido
             </Button>
+            <Button onClick={() => navigate("/entregas")} className="restaurant-gradient text-white">
+              <Plus className="w-4 h-4 mr-2" />
+             Fazer entrega
+            </Button>
           </div>
         </div>
 
