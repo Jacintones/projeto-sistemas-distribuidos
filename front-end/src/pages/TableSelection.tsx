@@ -4,7 +4,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users } from "lucide-react";
-import axios from "axios";
 
 type Mesa = {
   id: number;
@@ -25,10 +24,13 @@ const TableSelection = () => {
   });
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8080/mesas")
-      .then((res) => setMesas(res.data))
-      .catch((err) => console.error("Erro ao buscar mesas:", err));
+    const mesasIniciais = [
+      { id: 1, numero: "1", ocupada: true, assentos: 4 },
+      { id: 2, numero: "2", ocupada: false, assentos: 2 },
+      { id: 3, numero: "3", ocupada: false, assentos: 6 },
+      { id: 4, numero: "4", ocupada: true, assentos: 4 },
+    ];
+    setMesas(mesasIniciais); 
   }, []);
 
   const getStatusBadge = (mesa: Mesa) =>
@@ -49,50 +51,26 @@ const TableSelection = () => {
     }
   };
 
-  const handleStatusToggle = async (mesa: Mesa) => {
-    try {
-      const updatedMesa = { ...mesa, ocupada: !mesa.ocupada };
-      await axios.put(`http://localhost:8080/mesas/${mesa.id}`, updatedMesa);
-      setMesas((prevMesas) =>
-        prevMesas.map((m) => (m.id === mesa.id ? updatedMesa : m))
-      );
-    } catch (err) {
-      console.error("Erro ao alterar status da mesa:", err);
-    }
+  const handleStatusToggle = (mesa: Mesa) => {
+    const updatedMesa = { ...mesa, ocupada: !mesa.ocupada };
+    setMesas((prevMesas) =>
+      prevMesas.map((m) => (m.id === mesa.id ? updatedMesa : m))
+    );
   };
 
-const handleAddTable = async () => {
-  const { numero, ocupada, assentos } = newTable;
+  const handleAddTable = () => {
+    const tableToAdd = { ...newTable };
 
-  if (!numero || !assentos) {
-    return; 
-  }
+    if (!newTable.numero || !newTable.assentos) return;
 
-  const tableToAdd = {
-    numero,
-    ocupada,
-    assentos,
+    // Simulando a adição da nova mesa diretamente no estado
+    setMesas((prevMesas) => [
+      ...prevMesas,
+      { ...tableToAdd, id: prevMesas.length + 1 }, // Definindo id único
+    ]);
+
+    setShowAddForm(false);
   };
-
-  try {
-    const response = await axios.post("http://localhost:8080/mesas", tableToAdd);
-
-    setMesas((prevMesas) => [...prevMesas, response.data]);
-    setShowAddForm(false); 
-  } catch (err) {
-    let errorMessage = "Erro desconhecido";
-
-    if (err.response) {
-      errorMessage = err.response.data.message || "Erro ao comunicar com o servidor";
-    } else if (err.request) {
-      errorMessage = "Erro na requisição (sem resposta do servidor)";
-    }
-
-    console.error("Erro ao adicionar mesa:", errorMessage);
-  }
-};
-
-
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
