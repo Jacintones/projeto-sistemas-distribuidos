@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/comandas")
+@RequestMapping("api/comandas")
 public class PedidoController {
 
     private final PedidoService pedidoService;
