@@ -1,7 +1,6 @@
 spring:
   application:
     name: api-gateway
-
   cloud:
     gateway:
       server:
@@ -13,6 +12,11 @@ spring:
                 - Path=/api/**
               filters:
                 - StripPrefix=0
+            - id: comanda-service
+              uri: https://localhost:8485
+              predicates:
+                - Path=/api/**
+
           httpclient:
             ssl:
               use-insecure-trust-manager: true
