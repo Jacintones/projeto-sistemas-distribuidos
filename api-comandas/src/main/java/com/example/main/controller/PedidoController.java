@@ -60,9 +60,14 @@ public class PedidoController {
         return ResponseEntity.ok(pedido);
     }
 
-    @PutMapping("/{id}/enviar-para-cozinha")
-    public ResponseEntity<Pedido> enviarParaCozinha(@PathVariable Long id) {
-        Pedido pedido = pedidoService.enviarParaCozinha(id);
-        return ResponseEntity.ok(pedido);
+    @PostMapping("/enviar")
+    public ResponseEntity<String> enviarParaCozinha(@RequestBody PedidoDTO pedidoDTO, @RequestParam String numeroMesa) {
+        String response = pedidoService.enviarParaCozinha(pedidoDTO, numeroMesa);
+
+        if (response.startsWith("Erro")) {
+            return ResponseEntity.status(500).body(response);
+        } else {
+            return ResponseEntity.ok(response);
+        }
     }
 }
