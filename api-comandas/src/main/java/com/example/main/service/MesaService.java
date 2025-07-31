@@ -5,6 +5,7 @@ import com.example.main.repository.MesaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MesaService {
@@ -24,10 +25,28 @@ public class MesaService {
     }
 
     public Mesa alterarStatusMesa(Long id, Mesa mesa) {
-        Mesa mesaExistente = mesaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Mesa não encontrada"));
+        Optional<Mesa> mesaExistente = mesaRepository.findById(id);
 
-        mesaExistente.setOcupada(mesa.isOcupada());
-        return mesaRepository.save(mesaExistente);
+        if (mesaExistente.isPresent()) {
+            Mesa mesaAtualizada = mesaExistente.get();
+            mesaAtualizada.setOcupada(mesa.isOcupada());
+            return mesaRepository.save(mesaAtualizada);
+        } else {
+            throw new RuntimeException("Mesa não encontrada");
+        }
+    }
+
+    public Mesa atualizarMesa(Long id, Mesa mesa) {
+        Optional<Mesa> mesaExistente = mesaRepository.findById(id);
+
+        if (mesaExistente.isPresent()) {
+            Mesa mesaAtualizada = mesaExistente.get();
+            mesaAtualizada.setNumero(mesa.getNumero());
+            mesaAtualizada.setOcupada(mesa.isOcupada());
+            mesaAtualizada.setAssentos(mesa.getAssentos());
+            return mesaRepository.save(mesaAtualizada);
+        } else {
+            throw new RuntimeException("Mesa não encontrada");
+        }
     }
 }

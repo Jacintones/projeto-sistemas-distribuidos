@@ -34,4 +34,10 @@ public class MesaController {
         Mesa mesaAtualizada = mesaService.alterarStatusMesa(id, mesa);
         return ResponseEntity.ok(mesaAtualizada);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Mesa> atualizarMesa(@PathVariable Long id, @RequestBody Mesa mesa) {
+        Mesa mesaAtualizada = mesaService.atualizarMesa(id, mesa);
+        return ResponseEntity.ok(mesaAtualizada);
+    }
 }

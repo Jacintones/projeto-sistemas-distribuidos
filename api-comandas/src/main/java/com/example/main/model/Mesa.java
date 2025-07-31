@@ -12,7 +12,10 @@ public class Mesa {
 
     private boolean ocupada;
 
+    private int assentos; // Novo campo
+
     public Mesa() {}
+
 
     public Long getId() {
         return id;
@@ -36,5 +39,13 @@ public class Mesa {
 
     public void setOcupada(boolean ocupada) {
         this.ocupada = ocupada;
+    }
+
+    public int getAssentos() {
+        return assentos;
+    }
+
+    public void setAssentos(int assentos) {
+        this.assentos = assentos;
     }
 }
