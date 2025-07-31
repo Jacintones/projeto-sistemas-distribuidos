@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: api-gateway
@@ -12,14 +15,28 @@ spring:
                 - Path=/api/**
               filters:
                 - StripPrefix=0
+
             - id: comanda-service
               uri: https://localhost:8485
               predicates:
                 - Path=/api/**
 
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins:
+                  - "http://localhost:5173"
+                  - "http://localhost:8080"
+                allowedMethods:
+                  - GET
+                  - POST
+                  - PUT
+                  - DELETE
+                  - OPTIONS
+                allowedHeaders:
+                  - "*"
+                allowCredentials: true
+
           httpclient:
             ssl:
               use-insecure-trust-manager: true
-
-server:
-  port: 8080

@@ -29,7 +29,7 @@ public class MesaService {
 
         if (mesaExistente.isPresent()) {
             Mesa mesaAtualizada = mesaExistente.get();
-            mesaAtualizada.setOcupada(mesa.isOcupada()); // Atualiza o status de ocupação
+            mesaAtualizada.setOcupada(mesa.isOcupada());
             return mesaRepository.save(mesaAtualizada);
         } else {
             throw new RuntimeException("Mesa não encontrada");
