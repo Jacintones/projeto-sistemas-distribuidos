@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/prato")
+@RequestMapping("api/prato")
 public class PlateController {
 
     private final PlateService plateService;
