@@ -5,8 +5,8 @@
     <option name="originalFiles">
       <list>
         <option value="$PROJECT_DIR$/api-gateway/pom.xml" />
-        <option value="$PROJECT_DIR$/api-cozinhas/pom.xml" />
         <option value="$PROJECT_DIR$/api-comandas/pom.xml" />
+        <option value="$PROJECT_DIR$/api-cozinhas/pom.xml" />
       </list>
     </option>
   </component>

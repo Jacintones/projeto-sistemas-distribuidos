@@ -12,7 +12,7 @@ public class Mesa {
 
     private boolean ocupada;
 
-    private int assentos; // Novo campo
+    private int assentos;
 
     public Mesa() {}
 
