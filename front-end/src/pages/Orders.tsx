@@ -6,43 +6,86 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowLeft, Clock, CheckCircle, XCircle, Users } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 const Orders = () => {
   const navigate = useNavigate();
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
-  axios
-    .get("http://localhost:8081/comandas")
-    .then((response) => {
-      console.log("Resposta da API de comandas:", response.data); 
+  const statusMap = {
+    CRIADO: "preparing",
+    ENVIADO_COZINHA: "preparing",
+    EM_PREPARO: "preparing",
+    PRONTO: "ready",
+    ENTREGUE: "delivered",
+    PAGO: "delivered",
+  };
 
-      if (Array.isArray(response.data)) {
-        const mappedOrders = response.data.map((order: any) => ({
-          id: order.id,
-          table: order.mesa?.numero || "-",
-          waiter: order.garcomResponsavel,
-          items: order.itens || [],
-          time: new Date(order.criadoEm).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          }),
-          waitTime: "--",
-          total: 0.0,
-          status: order.status?.toLowerCase?.() || "criado",
-        }));
-        setOrders(mappedOrders);
-      } else {
-        setOrders([]);
-      }
-      setLoading(false);
-    })
-    .catch(() => {
-      setLoading(false);
-    });
-}, []);
+  const reverseStatusMap = {
+    preparing: "EM_PREPARO",
+    ready: "PRONTO",
+    delivered: "ENTREGUE",
+  };
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/comanda/api/comandas")
+      .then((response) => {
+        if (Array.isArray(response.data)) {
+          const mappedOrders = response.data.map((order: any) => ({
+            id: order.id,
+            table: order.mesa?.numero || "-",
+            waiter: order.garcomResponsavel,
+            items: order.itens || [],
+            time: new Date(order.criadoEm).toLocaleTimeString([], {
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            waitTime: "--",
+            total: 0.0,
+            status: statusMap[order.status] || "unknown",
+          }));
+          setOrders(mappedOrders);
+        } else {
+          setOrders([]);
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        toast.error("Erro ao carregar pedidos");
+        setLoading(false);
+      });
+  }, []);
+
+  const updateOrderStatus = async (orderId: number, newStatus: string) => {
+    const statusToSend = reverseStatusMap[newStatus];
+    if (!statusToSend) {
+      toast.error("Status inválido para atualização.");
+      return;
+    }
+
+    try {
+      await axios.put(
+        `http://localhost:8081/comanda/api/comandas/${orderId}/status`,
+        JSON.stringify(statusToSend),
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      setOrders((orders) =>
+        orders.map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        )
+      );
+      toast.success("Status atualizado com sucesso");
+    } catch (error) {
+      toast.error("Erro ao atualizar status");
+    }
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -65,29 +108,19 @@ useEffect(() => {
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "preparing": return <Clock className="w-4 h-4" />;
-      case "ready": return <CheckCircle className="w-4 h-4" />;
-      case "delivered": return <CheckCircle className="w-4 h-4" />;
-      default: return <XCircle className="w-4 h-4" />;
+      case "ready":
+      case "delivered":
+        return <CheckCircle className="w-4 h-4" />;
+      default:
+        return <XCircle className="w-4 h-4" />;
     }
   };
 
-  const updateOrderStatus = (orderId: number, newStatus: string) => {
-    axios
-      .put(`http://localhost:8080/comandas/${orderId}/status`, newStatus)
-      .then(() => {
-        setOrders(orders.map((order) =>
-          order.id === orderId ? { ...order, status: newStatus } : order
-        ));
-      });
-  };
-
-  const getOrderCounts = () => {
-    return {
-      preparing: orders.filter(o => o.status === "preparing").length,
-      ready: orders.filter(o => o.status === "ready").length,
-      delivered: orders.filter(o => o.status === "delivered").length,
-    };
-  };
+  const getOrderCounts = () => ({
+    preparing: orders.filter((o) => o.status === "preparing").length,
+    ready: orders.filter((o) => o.status === "ready").length,
+    delivered: orders.filter((o) => o.status === "delivered").length,
+  });
 
   const counts = getOrderCounts();
 

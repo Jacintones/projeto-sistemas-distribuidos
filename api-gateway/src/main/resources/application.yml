@@ -15,7 +15,7 @@ spring:
                 - StripPrefix=1
 
             - id: comanda-service
-              uri: https://localhost:8485
+              uri: http://localhost:8485
               predicates:
                 - Path=/comanda/**
               filters:

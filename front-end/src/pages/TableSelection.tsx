@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, Users } from "lucide-react";
+import { toast } from "sonner";
 
 type Mesa = {
   id: number;
@@ -24,13 +25,18 @@ const TableSelection = () => {
   });
 
   useEffect(() => {
-    const mesasIniciais = [
-      { id: 1, numero: "1", ocupada: true, assentos: 4 },
-      { id: 2, numero: "2", ocupada: false, assentos: 2 },
-      { id: 3, numero: "3", ocupada: false, assentos: 6 },
-      { id: 4, numero: "4", ocupada: true, assentos: 4 },
-    ];
-    setMesas(mesasIniciais); 
+    const fetchMesas = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/comanda/api/mesas");
+        const data = await response.json();
+        console.log(data)
+        setMesas(data);
+      } catch (error) {
+        console.error("Erro ao buscar mesas:", error);
+      }
+    };
+
+    fetchMesas();
   }, []);
 
   const getStatusBadge = (mesa: Mesa) =>
@@ -47,6 +53,7 @@ const TableSelection = () => {
 
   const handleTableSelect = (mesa: Mesa) => {
     if (!mesa.ocupada) {
+      localStorage.setItem("mesaSelecionada", JSON.stringify(mesa)); 
       navigate(`/menu/${mesa.id}`);
     }
   };
@@ -58,30 +65,42 @@ const TableSelection = () => {
     );
   };
 
-  const handleAddTable = () => {
-    const tableToAdd = { ...newTable };
-
+  const handleAddTable = async () => {
     if (!newTable.numero || !newTable.assentos) return;
 
-    // Simulando a adição da nova mesa diretamente no estado
-    setMesas((prevMesas) => [
-      ...prevMesas,
-      { ...tableToAdd, id: prevMesas.length + 1 }, // Definindo id único
-    ]);
+    try {
+      const response = await fetch("http://localhost:8081/comanda/api/mesas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          numero: newTable.numero,
+          assentos: newTable.assentos,
+          ocupada: newTable.ocupada,
+        }),
+      });
 
-    setShowAddForm(false);
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar mesa");
+      }
+
+      const addedMesa = await response.json();
+
+      setMesas((prevMesas) => [...prevMesas, addedMesa]);
+      setShowAddForm(false);
+      setNewTable({ id: 0, numero: "", ocupada: false, assentos: 2 });
+    } catch (error) {
+      toast.error(error);
+    }
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center mb-8">
-          <Button
-            variant="outline"
-            onClick={() => navigate("/dashboard")}
-            className="mr-4"
-          >
+          <Button variant="outline" onClick={() => navigate("/dashboard")} className="mr-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -91,15 +110,10 @@ const TableSelection = () => {
           </div>
         </div>
 
-        {/* Botão de Adicionar Mesa */}
-        <Button
-          className="mb-4 restaurant-gradient text-white"
-          onClick={() => setShowAddForm(true)}
-        >
+        <Button className="mb-4 restaurant-gradient text-white" onClick={() => setShowAddForm(true)}>
           Adicionar Nova Mesa
         </Button>
 
-        {/* Formulário de Adição de Mesa */}
         {showAddForm && (
           <Card className="mb-8 p-4">
             <CardHeader>
@@ -146,17 +160,10 @@ const TableSelection = () => {
                   </select>
                 </div>
 
-                <Button
-                  onClick={handleAddTable}
-                  className="w-full restaurant-gradient text-white"
-                >
+                <Button onClick={handleAddTable} className="w-full restaurant-gradient text-white">
                   Adicionar Mesa
                 </Button>
-                <Button
-                  onClick={() => setShowAddForm(false)}
-                  variant="outline"
-                  className="w-full mt-2"
-                >
+                <Button onClick={() => setShowAddForm(false)} variant="outline" className="w-full mt-2">
                   Cancelar
                 </Button>
               </div>
@@ -164,15 +171,12 @@ const TableSelection = () => {
           </Card>
         )}
 
-        {/* Grid de mesas */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {mesas.map((mesa) => (
             <Card
               key={mesa.id}
               onClick={() => handleTableSelect(mesa)}
-              className={`transition-all duration-200 cursor-pointer ${getTableStyle(
-                mesa.ocupada
-              )}`}
+              className={`transition-all duration-200 cursor-pointer ${getTableStyle(mesa.ocupada)}`}
             >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
@@ -190,7 +194,7 @@ const TableSelection = () => {
                 <div className="mt-4">
                   <Button
                     onClick={(e) => {
-                      e.stopPropagation(); // Impede o clique do botão de acionar o onClick do card
+                      e.stopPropagation();
                       handleStatusToggle(mesa);
                     }}
                     className="w-full"
@@ -204,7 +208,6 @@ const TableSelection = () => {
           ))}
         </div>
 
-        {/* Resumo */}
         <Card className="mt-8">
           <CardContent className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">

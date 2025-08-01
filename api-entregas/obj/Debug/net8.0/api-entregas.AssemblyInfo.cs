@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("api-entregas")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9d673474957d471758e86018b13851029d610afe")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+defd40835ce44709eb95add75565a241ac8fddbd")]
 [assembly: System.Reflection.AssemblyProductAttribute("api-entregas")]
 [assembly: System.Reflection.AssemblyTitleAttribute("api-entregas")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
