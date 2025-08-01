@@ -3,7 +3,6 @@ package com.restcon.api_cozinhas.controller.order;
 import com.restcon.api_cozinhas.entity.Order;
 import com.restcon.api_cozinhas.service.OrderService;
 import jakarta.validation.Valid;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 

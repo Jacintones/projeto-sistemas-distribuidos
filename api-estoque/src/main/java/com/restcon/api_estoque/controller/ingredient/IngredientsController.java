@@ -1,16 +1,16 @@
 package com.restcon.api_estoque.controller.ingredient;
 
 import com.restcon.api_estoque.entity.Ingredients;
-import com.restcon.api_estoque.repository.IngredientRepository;
 import com.restcon.api_estoque.service.IngredientService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/ingrediente")
+@RequestMapping("/api/ingrediente")
 public class IngredientsController {
 
     IngredientService ingredientService;
@@ -23,7 +23,7 @@ public class IngredientsController {
     public ResponseEntity<Ingredients> createIngredient(@RequestBody @Valid CreateIngredientDTO createIngredientDTO) {
         var ingredient_id = ingredientService.createIngredient(createIngredientDTO);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/ingrediente/id="+ingredient_id)).build();
     }
 
     @GetMapping

@@ -39,8 +39,13 @@ public class Ingredients {
     @UpdateTimestamp
     private Instant updatedAt;
 
-    public void ingredientConsume(Float quantity) {
-        this.quantity += quantity;
+    public void ingredientConsume(Float quantity)
+    {
+        if (quantity > this.quantity) {
+            this.quantity = 0.0F;
+        } else {
+            this.quantity += quantity;
+        }
     }
 
     public Ingredients(String name, String unit) {

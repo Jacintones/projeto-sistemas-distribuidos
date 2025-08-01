@@ -3,7 +3,12 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api-comandas/api-comandas.iml" filepath="$PROJECT_DIR$/api-comandas/api-comandas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-entregas/api-entregas.iml" filepath="$PROJECT_DIR$/api-entregas/api-entregas.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-estoque/src/main/main.iml" filepath="$PROJECT_DIR$/api-estoque/src/main/main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-gateway/src/main/main2.iml" filepath="$PROJECT_DIR$/api-gateway/src/main/main2.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/projeto-sistemas-distribuidos.iml" filepath="$PROJECT_DIR$/.idea/projeto-sistemas-distribuidos.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-estoque/src/test/test.iml" filepath="$PROJECT_DIR$/api-estoque/src/test/test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api-gateway/src/test/test2.iml" filepath="$PROJECT_DIR$/api-gateway/src/test/test2.iml" />
     </modules>
   </component>
 </project>

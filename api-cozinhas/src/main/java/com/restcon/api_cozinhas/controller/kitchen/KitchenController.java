@@ -1,6 +1,7 @@
 package com.restcon.api_cozinhas.controller.kitchen;
 
 import com.restcon.api_cozinhas.entity.Kitchen;
+import com.restcon.api_cozinhas.entity.Plate;
 import com.restcon.api_cozinhas.service.KitchenService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
