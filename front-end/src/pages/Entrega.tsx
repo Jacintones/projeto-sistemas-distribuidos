@@ -33,7 +33,7 @@ export default function CadastroEntregas() {
 
     const carregarMotoboys = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/motoboys/ativos`);
+            const res = await fetch(`${BASE_URL}/entrega/api/motoboys/ativos`);
             const data = await res.json();
             setMotoboys(data);
         } catch (err) {
@@ -43,7 +43,7 @@ export default function CadastroEntregas() {
 
     const carregarEntregas = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/entregas`);
+            const res = await fetch(`${BASE_URL}/entrega/api/entregas`);
             const data = await res.json();
             setEntregas(data);
         } catch (err) {
@@ -58,7 +58,7 @@ export default function CadastroEntregas() {
 
     const cadastrarMotoboy = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/motoboys`, {
+            const res = await fetch(`${BASE_URL}/entrega/api/motoboys`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ nome: nomeMotoboy, placaMoto: placaMotoboy }),
@@ -79,7 +79,7 @@ export default function CadastroEntregas() {
 
     const cadastrarEntrega = async () => {
         try {
-            const res = await fetch(`${BASE_URL}/api/entregas`, {
+            const res = await fetch(`${BASE_URL}/entrega/api/entregas`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -104,6 +104,7 @@ export default function CadastroEntregas() {
             toast.error("Erro: " + err);
         }
     };
+
 
     return (
         <div className="min-h-screen py-16 px-6 max-w-screen-xl mx-auto">
