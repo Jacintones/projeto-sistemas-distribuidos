@@ -4,9 +4,18 @@ build/
 .vite/
 .cache/
 
-.vs/
 bin/
 obj/
+*.user
+*.suo
+
+.vs/
+*.userosscache
+*.sln.docstates
+
 api-entregas/bin/
 api-entregas/obj/
 api-entregas/.vs/
+
+./obj/
+./bin/

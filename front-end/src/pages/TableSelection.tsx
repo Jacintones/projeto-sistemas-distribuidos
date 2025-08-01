@@ -1,65 +1,106 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Users, Clock } from "lucide-react";
+import { ArrowLeft, Users } from "lucide-react";
+import { toast } from "sonner";
+
+type Mesa = {
+  id: number;
+  numero: string;
+  ocupada: boolean;
+  assentos: number;
+};
 
 const TableSelection = () => {
   const navigate = useNavigate();
-  const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  const [mesas, setMesas] = useState<Mesa[]>([]);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newTable, setNewTable] = useState<Mesa>({
+    id: 0,
+    numero: "",
+    ocupada: false,
+    assentos: 2,
+  });
 
-  const tables = [
-    { id: 1, seats: 2, status: "available", orderTime: null },
-    { id: 2, seats: 4, status: "occupied", orderTime: "15 min" },
-    { id: 3, seats: 6, status: "available", orderTime: null },
-    { id: 4, seats: 2, status: "occupied", orderTime: "32 min" },
-    { id: 5, seats: 4, status: "available", orderTime: null },
-    { id: 6, seats: 8, status: "reserved", orderTime: "19:30" },
-    { id: 7, seats: 2, status: "available", orderTime: null },
-    { id: 8, seats: 4, status: "occupied", orderTime: "8 min" },
-    { id: 9, seats: 6, status: "available", orderTime: null },
-    { id: 10, seats: 4, status: "available", orderTime: null },
-    { id: 11, seats: 2, status: "occupied", orderTime: "25 min" },
-    { id: 12, seats: 8, status: "available", orderTime: null },
-  ];
+  useEffect(() => {
+    const fetchMesas = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/comanda/api/mesas");
+        const data = await response.json();
+        console.log(data)
+        setMesas(data);
+      } catch (error) {
+        console.error("Erro ao buscar mesas:", error);
+      }
+    };
 
-  const getTableColor = (status: string) => {
-    switch (status) {
-      case "available": return "bg-green-100 border-green-300 hover:bg-green-200";
-      case "occupied": return "bg-red-100 border-red-300";
-      case "reserved": return "bg-yellow-100 border-yellow-300";
-      default: return "bg-gray-100 border-gray-300";
+    fetchMesas();
+  }, []);
+
+  const getStatusBadge = (mesa: Mesa) =>
+    mesa.ocupada ? (
+      <Badge className="bg-red-500">Ocupada</Badge>
+    ) : (
+      <Badge className="bg-green-500">Disponível</Badge>
+    );
+
+  const getTableStyle = (ocupada: boolean) =>
+    ocupada
+      ? "bg-red-100 border-red-300 cursor-not-allowed opacity-75"
+      : "bg-green-100 border-green-300 hover:bg-green-200 hover:shadow-lg hover:-translate-y-1";
+
+  const handleTableSelect = (mesa: Mesa) => {
+    if (!mesa.ocupada) {
+      localStorage.setItem("mesaSelecionada", JSON.stringify(mesa)); 
+      navigate(`/menu/${mesa.id}`);
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "available": return <Badge className="bg-green-500">Disponível</Badge>;
-      case "occupied": return <Badge className="bg-red-500">Ocupada</Badge>;
-      case "reserved": return <Badge className="bg-yellow-500">Reservada</Badge>;
-      default: return <Badge>Desconhecido</Badge>;
+  const handleStatusToggle = (mesa: Mesa) => {
+    const updatedMesa = { ...mesa, ocupada: !mesa.ocupada };
+    setMesas((prevMesas) =>
+      prevMesas.map((m) => (m.id === mesa.id ? updatedMesa : m))
+    );
+  };
+
+  const handleAddTable = async () => {
+    if (!newTable.numero || !newTable.assentos) return;
+
+    try {
+      const response = await fetch("http://localhost:8081/comanda/api/mesas", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          numero: newTable.numero,
+          assentos: newTable.assentos,
+          ocupada: newTable.ocupada,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Erro ao adicionar mesa");
+      }
+
+      const addedMesa = await response.json();
+
+      setMesas((prevMesas) => [...prevMesas, addedMesa]);
+      setShowAddForm(false);
+      setNewTable({ id: 0, numero: "", ocupada: false, assentos: 2 });
+    } catch (error) {
+      toast.error(error);
     }
   };
 
-  const handleTableSelect = (tableId: number, status: string) => {
-    if (status === "available") {
-      setSelectedTable(tableId);
-      navigate(`/menu/${tableId}`);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
       <div className="max-w-6xl mx-auto">
-        {/* Header */}
         <div className="flex items-center mb-8">
-          <Button 
-            variant="outline" 
-            onClick={() => navigate("/dashboard")}
-            className="mr-4"
-          >
+          <Button variant="outline" onClick={() => navigate("/dashboard")} className="mr-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Voltar
           </Button>
@@ -69,81 +110,118 @@ const TableSelection = () => {
           </div>
         </div>
 
-        {/* Legend */}
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap gap-4">
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-green-500 rounded mr-2"></div>
-                <span className="text-sm">Disponível</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-                <span className="text-sm">Ocupada</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-4 h-4 bg-yellow-500 rounded mr-2"></div>
-                <span className="text-sm">Reservada</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        <Button className="mb-4 restaurant-gradient text-white" onClick={() => setShowAddForm(true)}>
+          Adicionar Nova Mesa
+        </Button>
 
-        {/* Tables Grid */}
+        {showAddForm && (
+          <Card className="mb-8 p-4">
+            <CardHeader>
+              <CardTitle>Adicionar Nova Mesa</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="numero" className="block text-sm font-medium text-gray-600">
+                    Número da Mesa
+                  </label>
+                  <input
+                    type="text"
+                    id="numero"
+                    value={newTable.numero}
+                    onChange={(e) => setNewTable({ ...newTable, numero: e.target.value })}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="assentos" className="block text-sm font-medium text-gray-600">
+                    Número de Assentos
+                  </label>
+                  <input
+                    type="number"
+                    id="assentos"
+                    value={newTable.assentos}
+                    onChange={(e) => setNewTable({ ...newTable, assentos: parseInt(e.target.value) })}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="ocupada" className="block text-sm font-medium text-gray-600">
+                    Status
+                  </label>
+                  <select
+                    id="ocupada"
+                    value={newTable.ocupada ? "ocupada" : "disponivel"}
+                    onChange={(e) => setNewTable({ ...newTable, ocupada: e.target.value === "ocupada" })}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="disponivel">Disponível</option>
+                    <option value="ocupada">Ocupada</option>
+                  </select>
+                </div>
+
+                <Button onClick={handleAddTable} className="w-full restaurant-gradient text-white">
+                  Adicionar Mesa
+                </Button>
+                <Button onClick={() => setShowAddForm(false)} variant="outline" className="w-full mt-2">
+                  Cancelar
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {tables.map((table) => (
+          {mesas.map((mesa) => (
             <Card
-              key={table.id}
-              className={`cursor-pointer transition-all duration-200 ${getTableColor(table.status)} ${
-                table.status === "available" ? "hover:shadow-lg hover:-translate-y-1" : "cursor-not-allowed opacity-75"
-              }`}
-              onClick={() => handleTableSelect(table.id, table.status)}
+              key={mesa.id}
+              onClick={() => handleTableSelect(mesa)}
+              className={`transition-all duration-200 cursor-pointer ${getTableStyle(mesa.ocupada)}`}
             >
               <CardHeader className="pb-2">
                 <div className="flex justify-between items-center">
-                  <CardTitle className="text-lg">Mesa {table.id}</CardTitle>
-                  {getStatusBadge(table.status)}
+                  <CardTitle className="text-lg">Mesa {mesa.numero}</CardTitle>
+                  {getStatusBadge(mesa)}
                 </div>
               </CardHeader>
               <CardContent className="pt-2">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center text-gray-600">
-                    <Users className="w-4 h-4 mr-1" />
-                    <span className="text-sm">{table.seats} lugares</span>
-                  </div>
-                  {table.orderTime && (
-                    <div className="flex items-center text-gray-600">
-                      <Clock className="w-4 h-4 mr-1" />
-                      <span className="text-sm">{table.orderTime}</span>
-                    </div>
-                  )}
+                <div className="flex items-center text-gray-600">
+                  <Users className="w-4 h-4 mr-1" />
+                  <span className="text-sm">
+                    {mesa.assentos} assento{mesa.assentos !== 1 && "s"}
+                  </span>
+                </div>
+                <div className="mt-4">
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusToggle(mesa);
+                    }}
+                    className="w-full"
+                    variant={mesa.ocupada ? "outline" : "default"}
+                  >
+                    {mesa.ocupada ? "Marcar como Disponível" : "Marcar como Ocupada"}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
           ))}
         </div>
 
-        {/* Summary */}
         <Card className="mt-8">
           <CardContent className="p-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-center">
               <div>
                 <p className="text-2xl font-bold text-green-600">
-                  {tables.filter(t => t.status === "available").length}
+                  {mesas.filter((m) => !m.ocupada).length}
                 </p>
                 <p className="text-gray-600">Mesas Disponíveis</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-red-600">
-                  {tables.filter(t => t.status === "occupied").length}
+                  {mesas.filter((m) => m.ocupada).length}
                 </p>
                 <p className="text-gray-600">Mesas Ocupadas</p>
-              </div>
-              <div>
-                <p className="text-2xl font-bold text-yellow-600">
-                  {tables.filter(t => t.status === "reserved").length}
-                </p>
-                <p className="text-gray-600">Mesas Reservadas</p>
               </div>
             </div>
           </CardContent>

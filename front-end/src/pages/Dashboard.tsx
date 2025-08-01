@@ -1,25 +1,32 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Users, ClipboardList, DollarSign, Clock, Plus, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const [comandas, setComandas] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const stats = [
-    { title: "Mesas Ocupadas", value: "12/20", icon: Users, color: "bg-blue-500" },
-    { title: "Pedidos Ativos", value: "24", icon: ClipboardList, color: "bg-green-500" },
-    { title: "Faturamento Hoje", value: "R$ 2.847", icon: DollarSign, color: "bg-orange-500" },
-    { title: "Tempo Médio", value: "18 min", icon: Clock, color: "bg-purple-500" },
-  ];
+  useEffect(() => {
+    axios
+      .get("http://localhost:8081/comanda/api/comandas")
+      .then((res) => setComandas(res.data || []))
+      .catch(() => setComandas([]))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const recentOrders = [
-    { table: "Mesa 5", items: "2 Pizzas, 1 Salada", status: "Preparando", time: "5 min" },
-    { table: "Mesa 12", items: "3 Hambúrguers", status: "Pronto", time: "2 min" },
-    { table: "Mesa 8", items: "1 Lasanha, 2 Bebidas", status: "Entregue", time: "15 min" },
-  ];
+  const recentOrders = comandas.slice(0, 3).map((c) => ({
+    table: `Mesa ${c.mesa?.numero || "?"}`,
+    items: (c.itens || []).join(", "),
+    status: c.status,
+    time: `${Math.round((new Date().getTime() - new Date(c.criadoEm).getTime()) / 60000)} min`,
+  }));
+
+  if (loading) return <div className="p-4 text-gray-600">Carregando dashboard...</div>;
 
   return (
     <div className="min-h-screen bg-gray-50 p-4">
@@ -41,29 +48,11 @@ const Dashboard = () => {
             </Button>
             <Button onClick={() => navigate("/entregas")} className="restaurant-gradient text-white">
               <Plus className="w-4 h-4 mr-2" />
-             Fazer entrega
+              Fazer entrega
             </Button>
           </div>
         </div>
 
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {stats.map((stat, index) => (
-            <Card key={index} className="card-hover">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">{stat.title}</p>
-                    <p className="text-3xl font-bold text-gray-800">{stat.value}</p>
-                  </div>
-                  <div className={`p-3 rounded-full ${stat.color}`}>
-                    <stat.icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Recent Orders */}
@@ -83,7 +72,7 @@ const Dashboard = () => {
                       <p className="text-sm text-gray-600">{order.items}</p>
                     </div>
                     <div className="text-right">
-                      <Badge variant={order.status === "Pronto" ? "default" : "secondary"}>
+                      <Badge variant={order.status === "PRONTO" ? "default" : "secondary"}>
                         {order.status}
                       </Badge>
                       <p className="text-xs text-gray-500 mt-1">{order.time}</p>
@@ -101,35 +90,19 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <Button 
-                  onClick={() => navigate("/tables")} 
-                  className="h-20 flex-col"
-                  variant="outline"
-                >
+                <Button onClick={() => navigate("/tables")} className="h-20 flex-col" variant="outline">
                   <Users className="w-8 h-8 mb-2" />
                   Selecionar Mesa
                 </Button>
-                <Button 
-                  onClick={() => navigate("/orders")} 
-                  className="h-20 flex-col"
-                  variant="outline"
-                >
+                <Button onClick={() => navigate("/orders")} className="h-20 flex-col" variant="outline">
                   <ClipboardList className="w-8 h-8 mb-2" />
                   Ver Pedidos
                 </Button>
-                <Button 
-                  onClick={() => navigate("/admin")} 
-                  className="h-20 flex-col"
-                  variant="outline"
-                >
+                <Button onClick={() => navigate("/admin")} className="h-20 flex-col" variant="outline">
                   <Settings className="w-8 h-8 mb-2" />
                   Configurações
                 </Button>
-                <Button 
-                  onClick={() => navigate("/login")} 
-                  className="h-20 flex-col"
-                  variant="outline"
-                >
+                <Button onClick={() => navigate("/login")} className="h-20 flex-col" variant="outline">
                   <Users className="w-8 h-8 mb-2" />
                   Sair
                 </Button>
