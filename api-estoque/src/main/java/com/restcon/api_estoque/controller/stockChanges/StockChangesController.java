@@ -1,5 +1,7 @@
 package com.restcon.api_estoque.controller.stockChanges;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restcon.api_estoque.entity.StockChanges;
 import com.restcon.api_estoque.service.StockChangesService;
 import jakarta.validation.Valid;
@@ -10,7 +12,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/movimentacoes")
+@RequestMapping("/api/movimentacoes")
 public class StockChangesController {
 
     private final StockChangesService stockChangesService;
@@ -53,4 +55,9 @@ public class StockChangesController {
         return ResponseEntity.noContent().build();
     }
 
+    @PostMapping("/updateStock")
+    public ResponseEntity<StockChanges> updateStockConsume(@RequestBody @Valid List<UpdateIngredientStockDTO> uisDTO ) {
+        stockChangesService.consumeIngredients(uisDTO);
+        return  ResponseEntity.noContent().build();
+    }
 }

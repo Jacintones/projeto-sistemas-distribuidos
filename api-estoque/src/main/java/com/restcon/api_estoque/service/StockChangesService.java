@@ -1,10 +1,12 @@
 package com.restcon.api_estoque.service;
 
 import com.restcon.api_estoque.controller.stockChanges.CreateStockChangesDTO;
+import com.restcon.api_estoque.controller.stockChanges.UpdateIngredientStockDTO;
 import com.restcon.api_estoque.controller.stockChanges.UpdateStockChangesDTO;
 import com.restcon.api_estoque.entity.StockChanges;
 import com.restcon.api_estoque.entity.StockSupplier;
 import com.restcon.api_estoque.exceptions.ChangeNotFound;
+import com.restcon.api_estoque.repository.IngredientRepository;
 import com.restcon.api_estoque.repository.StockChangesRepository;
 import org.hibernate.sql.Update;
 import org.springframework.stereotype.Service;
@@ -16,13 +18,15 @@ import java.util.Map;
 public class StockChangesService {
 
     private final StockChangesRepository stockChangesRepository;
+    private final IngredientRepository ingredientRepository;
     private final IngredientService ingredientService;
     private final StockSupplierService stockSupplierService;
 
-    public StockChangesService(StockChangesRepository stockChangesRepository, IngredientService IngredientService, StockSupplierService stockSupplierService) {
+    public StockChangesService(StockChangesRepository stockChangesRepository, IngredientService IngredientService, StockSupplierService stockSupplierService, IngredientRepository ingredientRepository) {
         this.stockChangesRepository = stockChangesRepository;
         this.ingredientService = IngredientService;
         this.stockSupplierService = stockSupplierService;
+        this.ingredientRepository = ingredientRepository;
     }
 
     public long createStockChanges(CreateStockChangesDTO createStockChangesDTO) {
@@ -93,5 +97,28 @@ public class StockChangesService {
         return stockChangesRepository.findAll();
     }
 
+    public void consumeIngredients(List<UpdateIngredientStockDTO> uisDTO) {
 
+        for (var plate : uisDTO ) {
+            for (Map.Entry<String, Double> ingredient : plate.ingredientsList().entrySet()){
+                long id = Long.parseLong(ingredient.getKey());
+                var ingredientEntity = ingredientService.getIngredientByID(id);
+
+                var ingQuantity = ingredient.getValue().floatValue();
+
+                ingredientEntity.ingredientConsume(-ingQuantity);
+
+                var stockChange = new StockChanges(
+                        0,
+                        plate.type(),
+                        Map.of(ingredient.getKey(), ingQuantity),
+                        null
+                );
+
+                ingredientRepository.save(ingredientEntity);
+                stockChangesRepository.save(stockChange);
+            }
+        }
+
+    }
 }

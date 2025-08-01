@@ -1,13 +1,18 @@
 package com.restcon.api_cozinhas.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.restcon.api_cozinhas.controller.order.CreateOrderDTO;
 import com.restcon.api_cozinhas.controller.order.UpdateOrderDTO;
+import com.restcon.api_cozinhas.controller.order.UpdateStockDTO;
 import com.restcon.api_cozinhas.entity.Order;
 import com.restcon.api_cozinhas.entity.Plate;
 import com.restcon.api_cozinhas.exceptions.OrderNotFound;
 import com.restcon.api_cozinhas.exceptions.PlateNotFound;
 import com.restcon.api_cozinhas.repository.OrderRepository;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,19 +43,51 @@ public class OrderService {
             plates.add(plate.get());
         }
 
-        System.out.println(plates);
-
         var order = new Order(
                 createOrderDTO.table_number(),
                 createOrderDTO.waiter(),
                 plates
         );
 
-        System.out.println(order);
-
         var savedOrder = orderRepository.save(order);
 
+        updateStock(plates);
+
         return savedOrder.getOrder_ID();
+    }
+
+    public void updateStock(List<Plate> plateList) {
+
+        List<UpdateStockDTO> updateList = new ArrayList<>();
+
+        for (var plate : plateList) {
+            var updatedPlate = new UpdateStockDTO(
+                    plate.getIngredients()
+            );
+
+            updateList.add(updatedPlate);
+        }
+
+        final String url = "http://localhost:9091/movimentacoes/updateStock";
+
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<List<UpdateStockDTO>> request = new HttpEntity<>(updateList, headers);
+
+        try {
+            restTemplate.exchange(
+                    url,
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+
+        } catch (Exception e) {
+            System.err.println("Erro ao enviar dados: " + e.getMessage());
+        }
     }
 
     public List<Order> getOrderList() {

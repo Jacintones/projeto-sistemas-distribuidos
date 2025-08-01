@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/fornecedor")
+@RequestMapping("/api/fornecedor")
 public class StockSupplierController {
     private final StockSupplierService stockSupplierService;
 
