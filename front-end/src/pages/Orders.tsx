@@ -28,7 +28,8 @@ const Orders = () => {
     delivered: "ENTREGUE",
   };
 
-  useEffect(() => {
+  const fetchOrders = () => {
+    setLoading(true);
     axios
       .get("http://localhost:8081/comanda/api/comandas")
       .then((response) => {
@@ -56,6 +57,10 @@ const Orders = () => {
         toast.error("Erro ao carregar pedidos");
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
   const updateOrderStatus = async (orderId: number, newStatus: string) => {
@@ -124,6 +129,61 @@ const Orders = () => {
 
   const counts = getOrderCounts();
 
+  const renderOrderCard = (order: any) => (
+    <Card key={order.id} className="card-hover">
+      <CardHeader className="pb-4">
+        <div className="flex justify-between items-center">
+          <CardTitle className="flex items-center">
+            <Users className="w-5 h-5 mr-2" /> Mesa {order.table}
+          </CardTitle>
+          <Badge className={getStatusColor(order.status)}>
+            {getStatusIcon(order.status)}
+            <span className="ml-1">{getStatusText(order.status)}</span>
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          <div>
+            <p className="font-semibold text-sm text-gray-600 mb-1">Itens:</p>
+            {order.items.map((item: string, index: number) => (
+              <p key={index} className="text-sm text-gray-800">• {item}</p>
+            ))}
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Horário:</span>
+            <span className="font-semibold">{order.time}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Tempo:</span>
+            <span className="font-semibold">{order.waitTime}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-gray-600">Total:</span>
+            <span className="font-bold text-lg">R$ {order.total.toFixed(2)}</span>
+          </div>
+          <div className="flex gap-2 mt-4">
+            {order.status === "preparing" && (
+              <Button onClick={() => updateOrderStatus(order.id, "ready")} size="sm" className="bg-green-500 hover:bg-green-600 flex-1">
+                Marcar Pronto
+              </Button>
+            )}
+            {order.status === "ready" && (
+              <Button onClick={() => updateOrderStatus(order.id, "delivered")} size="sm" className="bg-blue-500 hover:bg-blue-600 flex-1">
+                Marcar Entregue
+              </Button>
+            )}
+            {order.status === "delivered" && (
+              <Badge variant="secondary" className="flex-1 justify-center py-2">
+                Concluído
+              </Badge>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   if (loading) return <div>Carregando pedidos...</div>;
 
   return (
@@ -155,60 +215,25 @@ const Orders = () => {
 
           <TabsContent value="all">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {orders.map((order) => (
-                <Card key={order.id} className="card-hover">
-                  <CardHeader className="pb-4">
-                    <div className="flex justify-between items-center">
-                      <CardTitle className="flex items-center">
-                        <Users className="w-5 h-5 mr-2" /> Mesa {order.table}
-                      </CardTitle>
-                      <Badge className={getStatusColor(order.status)}>
-                        {getStatusIcon(order.status)}
-                        <span className="ml-1">{getStatusText(order.status)}</span>
-                      </Badge>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="font-semibold text-sm text-gray-600 mb-1">Itens:</p>
-                        {order.items.map((item: string, index: number) => (
-                          <p key={index} className="text-sm text-gray-800">• {item}</p>
-                        ))}
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Horário:</span>
-                        <span className="font-semibold">{order.time}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Tempo:</span>
-                        <span className="font-semibold">{order.waitTime}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Total:</span>
-                        <span className="font-bold text-lg">R$ {order.total.toFixed(2)}</span>
-                      </div>
-                      <div className="flex gap-2 mt-4">
-                        {order.status === "preparing" && (
-                          <Button onClick={() => updateOrderStatus(order.id, "ready")} size="sm" className="bg-green-500 hover:bg-green-600 flex-1">
-                            Marcar Pronto
-                          </Button>
-                        )}
-                        {order.status === "ready" && (
-                          <Button onClick={() => updateOrderStatus(order.id, "delivered")} size="sm" className="bg-blue-500 hover:bg-blue-600 flex-1">
-                            Marcar Entregue
-                          </Button>
-                        )}
-                        {order.status === "delivered" && (
-                          <Badge variant="secondary" className="flex-1 justify-center py-2">
-                            Concluído
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+              {orders.map((order) => renderOrderCard(order))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="preparing">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {orders.filter((o) => o.status === "preparing").map((order) => renderOrderCard(order))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="ready">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {orders.filter((o) => o.status === "ready").map((order) => renderOrderCard(order))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="delivered">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {orders.filter((o) => o.status === "delivered").map((order) => renderOrderCard(order))}
             </div>
           </TabsContent>
         </Tabs>
